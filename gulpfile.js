@@ -62,6 +62,16 @@ function js(done) {
     ], handleError(done));
 }
 
+function locales(done) {
+    pump([
+        src([
+            'locales/*.json'
+        ]),
+        dest('locales'),
+        livereload()
+    ], handleError(done));
+}
+
 function lint(done) {
     pump([
         src(['assets/css/**/*.css', '!assets/css/vendor/*']),
@@ -93,8 +103,9 @@ function zipper(done) {
 const hbsWatcher = () => watch(['*.hbs', 'partials/**/*.hbs', 'members/**/*.hbs'], hbs);
 const cssWatcher = () => watch('assets/css/**/*.css', css);
 const jsWatcher = () => watch('assets/js/**/*.js', js);
-const watcher = parallel(hbsWatcher, cssWatcher, jsWatcher);
-const build = series(css, js);
+const localesWatcher = () => watch('locales/*.json', locales);
+const watcher = parallel(hbsWatcher, cssWatcher, jsWatcher, localesWatcher);
+const build = series(css, js, locales);
 
 exports.build = build;
 exports.lint = lint;
